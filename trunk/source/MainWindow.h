@@ -23,6 +23,7 @@ private:
 
 	QSqlDatabase m_db;
 	QSqlQueryModel* m_model;
+    QString m_dbFile;
 
 	QString m_systemName;
 	QString m_planetName;
@@ -32,7 +33,7 @@ private:
 	void refreshTable(const QString& system, const QString& planet, const QString& commodity);
 
 	void closeEvent(QCloseEvent *event);
-	void restoreWindowState();
+    void readSettings();
 
 private slots:
 	void onSystemNameChanged(QString systemName);

@@ -1,0 +1,38 @@
+нструкция к обогащению, без лишних утилит и блокнотов Улыбка
+
+1) Dock in Station.
+
+2) Bring up Galaxy Map.
+
+3) Check a nearby system:
+a) If the system is an Industrial System - they will buy metal
+b) If the system is a refinery system - they will buy minerals
+c) If it is an Extraction system - they will buy Mineral Extractors and Explosives.
+
+4) Now while at the Galactic Map, check the system you are in:
+a) An Industrial System sells machinery cheap.
+b) A refinery sells metal cheap
+c) An Extraction site sells minerals cheap
+
+5) The connection between points 4 and 5 should now be completely obvious!
+a) Buy Minerals from and Extraction system and sell in a Refinery System
+b) Buy Machinary in a Industrial System and Sell in a High Tech System.
+c) Buy Metal at a Refinary system and sell to an Industrial System.
+
+No need for a galactic wide price list - this is far, far easier!!! You instantly know what the system is going to buy before even visiting. And you instantly know where to buy a product cheap without even visiting a system.
+
+This is why the Galactic Trade Map only tells you info about Categories and not individual products. The individual product is largely irrelevant for basic trading.
+
+There are some outliers to this, where you can sell in a more advanced way. But there really isn't a need. Following the guide above you can make 3.5k profit per run in a Sidewinder within about 1hr or play.
+
+
+------------
+
+
+Рецепт начального заработка простой - лети на пустом корабле в ближайшую анархическую систему, подлети поближе к станции (10-20LS), находясь в суперкруизе, сбрось скорость до минимальной 30km/s и лети жди первого неопознанного сигнала, ныряй в него, если там груз вокруг тебя - собирай (если GOLD - собирай как можно быстрее и будь готов сразу валить), если не груз - вырубай FLIGHT-ASSIST, дави буст, ставь энергию в щиты максимум и быстрей выходи в суперкруиз обратно сразу же как только увидишь Frame Shift Drive online. Выходя в суперкруиз - сразу же дави кнопку сброса скорости в 0%, чтобы не набирать выше 30km/s. Насобирал груза - тащищь его на станцию и продаешь на блэкмаркете. Суть в том, что пока-что (не знаю как будет в бете2), вероятность возникновения USS (неопознанных сигналов) при разной скорости движения в суперкрузие совершенно одинаковая, а значит - незачем носиться на больших скоростях где попало (чем ближе ты к станции, тем быстрее продашь товар). 
+
+
+
+-------------
+
+

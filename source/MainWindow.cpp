@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_planetName = "";
 	m_commodityName = "";
 
-	restoreWindowState();
+    readSettings();
 	initialize();
 
-	connect(ui->widget, SIGNAL(textChanged(QString)), this, SLOT(onSystemNameChanged(QString)));
+    connect(ui->widget, SIGNAL(textChanged(QString)), this, SLOT(onSystemNameChanged(QString)));
 	connect(ui->widget_2, SIGNAL(textChanged(QString)), this, SLOT(onPlanetNameChanged(QString)));
 	connect(ui->widget_3, SIGNAL(textChanged(QString)), this, SLOT(onCommodityNameChanged(QString)));
 }
@@ -44,7 +44,7 @@ MainWindow::~MainWindow()
 void MainWindow::initialize()
 {
 	m_db = QSqlDatabase::addDatabase("QSQLITE");
-	QString  dbFileName("db\\tradeDB.sqlite");
+    QString  dbFileName(m_dbFile);
 	m_db.setDatabaseName(dbFileName);
 
 	QFileInfo fi(dbFileName);
@@ -73,7 +73,7 @@ void MainWindow::refreshTable(const QString& system, const QString& planet, cons
 
 	if (system.length()+planet.length()+commodity.length() != 0)
 	{
-//		if (!system.isEmpty()) filter.append(QString("UPPER(system) LIKE '%%1%'").arg(system));
+        if (!system.isEmpty()) filter.append(QString("UPPER(system) LIKE '%%1%'").arg(system));
 		if (!planet.isEmpty()) filter.append(QString("UPPER(planet) LIKE '%%1%'").arg(planet));
 		if (!commodity.isEmpty()) filter.append(QString("UPPER(name) LIKE '%%1%'").arg(commodity));
 	}
@@ -90,6 +90,7 @@ void MainWindow::refreshTable(const QString& system, const QString& planet, cons
 
 	ui->tableView->setModel(m_model);
 	m_model->setQuery(query);
+    ui->tableView->resizeColumnsToContents();
 }
 
 /*!
@@ -111,11 +112,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
    Read and restore window state.
  */
 
-void MainWindow::restoreWindowState()
+void MainWindow::readSettings()
 {
 	QSettings settings("ru.glider", "EliteDangerousTradeHelper");
 	restoreGeometry(settings.value("geometry").toByteArray());
 	restoreState(settings.value("windowState").toByteArray());
+
+    m_dbFile = settings.value("dataBase").toString();
+    if (m_dbFile.isEmpty()) m_dbFile = "db\\tradeDB.sqlite";
 }
 
 /*!
@@ -127,7 +131,7 @@ void MainWindow::restoreWindowState()
 void MainWindow::onSystemNameChanged(QString systemName)
 {
 	m_systemName = systemName;
-	refreshTable(m_planetName, m_planetName, m_commodityName);
+    refreshTable(m_systemName, m_planetName, m_commodityName);
 }
 
 /*!
@@ -139,7 +143,7 @@ void MainWindow::onSystemNameChanged(QString systemName)
 void MainWindow::onPlanetNameChanged(QString planetName)
 {
 	m_planetName = planetName;
-	refreshTable(m_planetName, m_planetName, m_commodityName);
+    refreshTable(m_systemName, m_planetName, m_commodityName);
 }
 
 /*!
@@ -151,5 +155,5 @@ void MainWindow::onPlanetNameChanged(QString planetName)
 void MainWindow::onCommodityNameChanged(QString commodityName)
 {
 	m_commodityName = commodityName;
-	refreshTable(m_planetName, m_planetName, m_commodityName);
+    refreshTable(m_systemName, m_planetName, m_commodityName);
 }

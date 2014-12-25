@@ -6,7 +6,9 @@
 
 QT       += core gui sql
 
-QMAKE_CXXFLAGS += -std=gnu++0x
+win32-g++ {
+	QMAKE_CXXFLAGS += -std=gnu++0x
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,5 +27,5 @@ FORMS    += MainWindow.ui \
 	CSelectHelper.ui
 
 DISTFILES += \
-    dbtools/createQuery.cmd \
-    dbtools/goods.list
+	dbtools/createQuery.cmd \
+	dbtools/goods.list

@@ -37,20 +37,45 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QToolButton" name="clearToolButton">
-         <property name="text">
-          <string>CL</string>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string> Location filter </string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QToolButton" name="clearToolButton">
+            <property name="text">
+             <string>Clear location</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="CSelectHelper" name="widget" native="true"/>
+          </item>
+          <item>
+           <widget class="CSelectHelper" name="widget_2" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="CSelectHelper" name="widget" native="true"/>
-       </item>
-       <item>
-        <widget class="CSelectHelper" name="widget_2" native="true"/>
-       </item>
-       <item>
-        <widget class="CSelectHelper" name="widget_3" native="true"/>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string> Commodity filter </string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="CSelectHelper" name="widget_3" native="true"/>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton">
+            <property name="text">
+             <string>Set price...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>

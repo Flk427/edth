@@ -134,11 +134,11 @@ void MainWindow::clearFilter()
 {
 	m_systemName = "";
 	m_planetName = "";
-	m_commodityName = "";
+//	m_commodityName = "";
 
 	ui->widget->setFilter("");
 	ui->widget_2->setFilter("");
-	ui->widget_3->setFilter("");
+//	ui->widget_3->setFilter("");
 
 	ui->widget_2->setParentFilterValue("");
 

@@ -5,6 +5,8 @@
 #include <QtSql/QSqlQueryModel>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
+#include "CSelectHelper.h"
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +44,8 @@ private slots:
 	void onSystemNameChanged(QString systemName);
 	void onPlanetNameChanged(QString planetName);
 	void onCommodityNameChanged(QString commodityName);
+
+	void onSystemsListChanged(QVector<SItem> items);
 };
 
 #endif // MAINWINDOW_H

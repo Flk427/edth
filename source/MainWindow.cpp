@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setWindowTitle("Elite Dangerous Trade Helper");
 	ui->widget->setTitle("System");
 	ui->widget_2->setTitle("Station");
+	ui->widget_2->setParentFilterName("system_id");
 	ui->widget_3->setTitle("Commodity");
 
 	m_model = nullptr;
@@ -32,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->widget, SIGNAL(textChanged(QString)), this, SLOT(onSystemNameChanged(QString)));
 	connect(ui->widget_2, SIGNAL(textChanged(QString)), this, SLOT(onPlanetNameChanged(QString)));
 	connect(ui->widget_3, SIGNAL(textChanged(QString)), this, SLOT(onCommodityNameChanged(QString)));
+
+	connect(ui->widget, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onSystemsListChanged(QVector<SItem>)));
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 }
 
@@ -137,6 +140,8 @@ void MainWindow::clearFilter()
 	ui->widget_2->setFilter("");
 	ui->widget_3->setFilter("");
 
+	ui->widget_2->setParentFilterValue("");
+
 	refreshTable(m_systemName, m_planetName, m_commodityName);
 }
 
@@ -174,4 +179,23 @@ void MainWindow::onCommodityNameChanged(QString commodityName)
 {
 	m_commodityName = commodityName;
 	refreshTable(m_systemName, m_planetName, m_commodityName);
+}
+
+void MainWindow::onSystemsListChanged(QVector<SItem> items)
+{
+	qDebug() << "MainWindow::onSystemsListChanged";
+
+	QStringList filterItems;
+
+	if (!m_systemName.isEmpty())
+	{
+		for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
+		{
+			filterItems.push_back(QString::number(it->id));
+		}
+	}
+
+	qDebug() << "Filter:" << filterItems.join(", ");
+
+	ui->widget_2->setParentFilterValue(filterItems.join(", "));
 }

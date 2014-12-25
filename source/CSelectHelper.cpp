@@ -12,23 +12,20 @@ CSelectHelper::CSelectHelper(QWidget *parent) :
 	ui->setupUi(this);
 
 	m_model = new QSqlQueryModel(this);
-	m_completearProxyModel = new QSortFilterProxyModel(this);
 	m_sourceProxyModel = new QSortFilterProxyModel(this);
-	m_mycompletear = new QCompleter(this);
 
-	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onLabelTextChanged(QString)));
+	// Сигнал для обновления таблицы результатов
+	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SIGNAL(textChanged(QString)));
+	// Подстановка результата в текстовое поле (вызовет сигнал для обновления таблицы результатов)
 	connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListViewClicked(QModelIndex)));
-
-	//	connect(ui->addToolButton, SIGNAL(clicked()), this, SLOT(test()));
+	// Сигнал для обновления зависимых таблиц
+	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(setFilter(QString)));
 }
 
 CSelectHelper::~CSelectHelper()
 {
 	delete m_model;
 	delete m_sourceProxyModel;
-	delete m_completearProxyModel;
-	delete m_mycompletear;
-
 	delete ui;
 }
 
@@ -42,37 +39,58 @@ QString CSelectHelper::getText()
 	return ui->label->text();
 }
 
+void CSelectHelper::setParentFilterName(const QString& value)
+{
+	parentFilterName = value;
+}
+
+void CSelectHelper::setParentFilterValue(const QString& value)
+{
+	parentFilterValue = value;
+	updateList();
+}
+
 void CSelectHelper::setTable(QString tableName)
 {
 	m_tableName = tableName;
-	updateList("");
+	nameFilter = "";
+	updateList();
 }
 
 void CSelectHelper::setFilter(QString value)
 {
 	ui->lineEdit->setText(value);
+	nameFilter = value;
+	updateList();
 }
 
-void CSelectHelper::onLabelTextChanged(QString text)
+void CSelectHelper::updateList()
 {
-	updateList(text);
-	emit textChanged(text);
-}
+	QString query("SELECT id, name FROM " + m_tableName);
 
-void CSelectHelper::updateList(QString filter)
-{
-	if (!filter.isEmpty())
+	if (!nameFilter.isEmpty() || !parentFilterValue.isEmpty())
 	{
-		m_model->setQuery("SELECT id, name FROM " + m_tableName + " WHERE UPPER(name) LIKE '%" + filter + "%'");
-	}
-	else
-	{
-		m_model->setQuery("SELECT id, name FROM " + m_tableName);
+		query += " WHERE ";
 	}
 
-//	m_completearProxyModel->setSourceModel(m_model);
-//	m_completearProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-//	m_completearProxyModel->setFilterKeyColumn(1);
+	if (!nameFilter.isEmpty())
+	{
+		query += "UPPER(name) LIKE '%" + nameFilter + "%'";
+
+		if (!parentFilterValue.isEmpty())
+		{
+			query += " AND ";
+		}
+	}
+
+	if (!parentFilterValue.isEmpty())
+	{
+		query += parentFilterName + " IN (" + parentFilterValue + ")";
+	}
+
+	qDebug() << m_tableName << "query: " << query;
+
+	m_model->setQuery(query);
 
 	m_sourceProxyModel->setSourceModel(m_model);
 	m_sourceProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -81,38 +99,25 @@ void CSelectHelper::updateList(QString filter)
 	ui->listView->setModel(m_sourceProxyModel);
 	ui->listView->setModelColumn(1);
 
-//	m_mycompletear->setCaseSensitivity(Qt::CaseInsensitive);
-//	m_mycompletear->setModel(m_completearProxyModel);
-//	m_mycompletear->setCompletionColumn(1);
-//	m_mycompletear->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-//	ui->comboBox->setCompleter(m_mycompletear);
+	qDebug() << "READ:" << m_tableName;
 
-	//	clearDropdownList();
+	QVector<SItem> items;
 
-	//	QString text = ui->comboBox->currentText();
-	//	QString queryText = "SELECT name FROM " + m_tableName + " WHERE name LIKE '%" + text + "%' ORDER BY name";
-	//	qDebug() << queryText;
+	for (int i=0; i<ui->listView->model()->rowCount(); i++)
+	{
+		SItem item;
+		item.id = ui->listView->model()->index(i, 0).data().toInt();
+		item.name = ui->listView->model()->index(i, 1).data().toString();
 
-	//	QSqlQuery query(queryText);
-	//	if (query.exec())
-	//	{
-	//		while (query.next())
-	//		{
-	//			qDebug() << query.value("name").toString();
-	//			ui->comboBox->addItem(query.value("name").toString());
-	//		}
-	//		ui->comboBox->setCurrentIndex(-1);
-	//		ui->comboBox->setCurrentText(text);
-	//		ui->comboBox->showPopup();
-	//	}
-	//	else
-	//	{
-	//		qDebug() << "query is not executed" << query.lastError().text();
-	//	}
+		qDebug() << "id:" << item.id << "name:" << item.name;
+
+		items.push_back(item);
+	}
+
+	emit listChanged(items);
 }
 
 void CSelectHelper::onListViewClicked(QModelIndex modelIndex)
 {
-//	emit textChanged(modelIndex.data().toString());
 	ui->lineEdit->setText(modelIndex.data().toString());
 }

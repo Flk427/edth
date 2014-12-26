@@ -11,17 +11,15 @@ CSelectHelper::CSelectHelper(QWidget *parent) :
 	ui(new Ui::CSelectHelper)
 {
 	ui->setupUi(this);
-	hideClearButton();
 
 	m_model = new QSqlQueryModel(this);
 	m_sourceProxyModel = new QSortFilterProxyModel(this);
 
 	// Сигнал для обновления таблицы результатов
 	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SIGNAL(textChanged(QString)));
+
 	// Подстановка результата в текстовое поле (вызовет сигнал для обновления таблицы результатов)
 	connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListViewClicked(QModelIndex)));
-
-//	connect(ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(onSelectionChanged(QModelIndex,QModelIndex)));
 
 	// Сигнал для обновления зависимых таблиц
 	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(setFilter(QString)));
@@ -79,6 +77,7 @@ void CSelectHelper::setTable(QString tableName)
 
 void CSelectHelper::setFilter(QString value)
 {
+	qDebug() << "CSelectHelper::setFilter:" << value;
 	ui->lineEdit->setText(value);
 	nameFilter = value;
 	updateList();
@@ -133,15 +132,18 @@ void CSelectHelper::updateList()
 
 	QVector<SItem> items;
 
-	for (int i=0; i<ui->listView->model()->rowCount(); i++)
+	if (!ui->lineEdit->text().isEmpty())
 	{
-		SItem item;
-		item.id = ui->listView->model()->index(i, 0).data().toInt();
-		item.name = ui->listView->model()->index(i, 1).data().toString();
+		for (int i=0; i<ui->listView->model()->rowCount(); i++)
+		{
+			SItem item;
+			item.id = ui->listView->model()->index(i, 0).data().toInt();
+			item.name = ui->listView->model()->index(i, 1).data().toString();
 
-//		qDebug() << "id:" << item.id << "name:" << item.name;
+			//		qDebug() << "id:" << item.id << "name:" << item.name;
 
-		items.push_back(item);
+			items.push_back(item);
+		}
 	}
 
 	emit listChanged(items);

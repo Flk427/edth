@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	m_addSystemDialog = new CAddSystemDialog(this);
+	m_addStationDialog = new CAddStationDialog(m_addSystemDialog, this);
 
 	setWindowTitle("Elite Dangerous Trade Helper");
 	ui->widget->setTitle("System");
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
 	connect(ui->widget, SIGNAL(addButtonClicked(QString)), this, SLOT(addSystemName(QString)));
+	connect(ui->widget_2, SIGNAL(addButtonClicked(QString)), this, SLOT(addStation(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -85,7 +87,10 @@ void MainWindow::refreshTable(const QString& system, const QString& planet, cons
 {
 	QStringList filter;
 
-//	qDebug() << commodity;
+	qDebug() << "MainWindow::refreshTable"
+			 << "S:" << system
+			 << "P:" << planet
+			 << "C:" << commodity;
 
 	if (system.length()+planet.length()+commodity.length() != 0)
 	{
@@ -159,6 +164,7 @@ void MainWindow::clearFilter()
 
 void MainWindow::onSystemNameChanged(QString systemName)
 {
+	if (systemName.isEmpty()) ui->widget_2->setParentFilterValue("");
 	m_systemName = systemName;
 	refreshTable(m_systemName, m_planetName, m_commodityName);
 }
@@ -189,11 +195,11 @@ void MainWindow::onCommodityNameChanged(QString commodityName)
 
 void MainWindow::onSystemsListChanged(QVector<SItem> items)
 {
-	qDebug() << "MainWindow::onSystemsListChanged";
+	qDebug() << "MainWindow::onSystemsListChanged" << items.length();
 
 	m_filterItems.clear();
 
-	if (!m_systemName.isEmpty())
+//	if (!m_systemName.isEmpty())
 	{
 		for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
 		{
@@ -229,6 +235,16 @@ void MainWindow::addSystemName(QString text)
 {
 	m_addSystemDialog->setup(text);
 	if (m_addSystemDialog->exec() == QDialog::Accepted)
+	{
+		// done
+		clearFilter();
+	}
+}
+
+void MainWindow::addStation(QString text)
+{
+	m_addStationDialog->setup(m_systemName);
+	if (m_addStationDialog->exec() == QDialog::Accepted)
 	{
 		// done
 		clearFilter();

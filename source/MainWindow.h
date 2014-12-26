@@ -9,6 +9,7 @@
 #include <QDebug>
 
 #include "CAddSystemDialog.h"
+#include "CAddStationDialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,7 @@ private:
 
 	QStringList m_filterItems;
 	CAddSystemDialog* m_addSystemDialog;
+	CAddStationDialog* m_addStationDialog;
 
 	void initialize();
 	void refreshTable(const QString& system, const QString& planet, const QString& commodity);
@@ -54,6 +56,7 @@ private slots:
 	void onStationsListChanged(QVector<SItem> items);
 
 	void addSystemName(QString text);
+	void addStation(QString text);
 };
 
 #endif // MAINWINDOW_H

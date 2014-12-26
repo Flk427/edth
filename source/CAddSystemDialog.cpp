@@ -48,6 +48,13 @@ void CAddSystemDialog::setup(QString name)
 
 void CAddSystemDialog::onAcceptClicked()
 {
+	if (ui->lineEdit->text().isEmpty())
+	{
+		ui->busyLabel->setText("*) Name is empty");
+		ui->busyLabel->show();
+		return;
+	}
+
 	// Check unique
 	QString queryText(QString("SELECT id FROM systems WHERE UPPER(name)=UPPER('%1')").arg(ui->lineEdit->text()));
 	QSqlQuery query;

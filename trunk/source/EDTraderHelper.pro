@@ -18,13 +18,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
 		MainWindow.cpp \
-	CSelectHelper.cpp
+	CSelectHelper.cpp \
+    CAddSystemDialog.cpp
 
 HEADERS  += MainWindow.h \
-	CSelectHelper.h
+	CSelectHelper.h \
+    CAddSystemDialog.h
 
 FORMS    += MainWindow.ui \
-	CSelectHelper.ui
+	CSelectHelper.ui \
+    CAddSystemDialog.ui
 
 DISTFILES += \
 	dbtools/createQuery.cmd \

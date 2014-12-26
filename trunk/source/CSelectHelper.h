@@ -28,6 +28,9 @@ public:
 	void setTitle(const QString& text);
 	QString getText();
 
+	void hideClearButton();
+	void showClearButton();
+
 	void setParentFilterName(const QString& value);
 	void setParentFilterValue(const QString& value);
 
@@ -43,14 +46,17 @@ private:
 public slots:
 	void setTable(QString tableName);
 	void setFilter(QString value);
+	void clearFilter();
 
 private slots:
 	void updateList();
 	void onListViewClicked(QModelIndex modelIndex);
+	void onAddButtonClicked();
 
 signals:
 	void textChanged(QString text);
 	void listChanged(const QVector<SItem>& items);
+	void addButtonClicked(QString text);
 };
 
 #endif // CSELECTHELPER_H

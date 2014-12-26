@@ -52,6 +52,7 @@ private slots:
 	void updateList();
 	void onListViewClicked(QModelIndex modelIndex);
 	void onAddButtonClicked();
+	void onSelectionChanged(const QModelIndex& i1, const QModelIndex& i2);
 
 signals:
 	void textChanged(QString text);

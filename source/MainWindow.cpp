@@ -11,11 +11,17 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+
+	m_addSystemDialog = new CAddSystemDialog(this);
+
 	setWindowTitle("Elite Dangerous Trade Helper");
 	ui->widget->setTitle("System");
 	ui->widget_2->setTitle("Station");
 	ui->widget_2->setParentFilterName("system_id");
 	ui->widget_3->setTitle("Commodity");
+	ui->widget_3->showClearButton();
+
+	ui->widget_3->setParentFilterName("station_id");
 
 	m_model = nullptr;
 
@@ -36,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	connect(ui->widget, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onSystemsListChanged(QVector<SItem>)));
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+
+	connect(ui->widget, SIGNAL(addButtonClicked(QString)), this, SLOT(addSystemName(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -134,11 +142,9 @@ void MainWindow::clearFilter()
 {
 	m_systemName = "";
 	m_planetName = "";
-//	m_commodityName = "";
 
-	ui->widget->setFilter("");
-	ui->widget_2->setFilter("");
-//	ui->widget_3->setFilter("");
+	ui->widget->clearFilter();
+	ui->widget_2->clearFilter();
 
 	ui->widget_2->setParentFilterValue("");
 
@@ -185,17 +191,46 @@ void MainWindow::onSystemsListChanged(QVector<SItem> items)
 {
 	qDebug() << "MainWindow::onSystemsListChanged";
 
-	QStringList filterItems;
+	m_filterItems.clear();
 
 	if (!m_systemName.isEmpty())
 	{
 		for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
 		{
-			filterItems.push_back(QString::number(it->id));
+			m_filterItems.push_back(QString::number(it->id));
 		}
 	}
 
-	qDebug() << "Filter:" << filterItems.join(", ");
+	qDebug() << "Filter:" << m_filterItems.join(", ");
 
-	ui->widget_2->setParentFilterValue(filterItems.join(", "));
+	ui->widget_2->setParentFilterValue(m_filterItems.join(", "));
+}
+
+void MainWindow::onStationsListChanged(QVector<SItem> items)
+{
+	qDebug() << "MainWindow::onStationsListChanged";
+
+	m_filterItems.clear();
+
+	if (!m_systemName.isEmpty())
+	{
+		for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
+		{
+			m_filterItems.push_back(QString::number(it->id));
+		}
+	}
+
+	qDebug() << "Filter:" << m_filterItems.join(", ");
+
+	ui->widget_3->setParentFilterValue(m_filterItems.join(", "));
+}
+
+void MainWindow::addSystemName(QString text)
+{
+	m_addSystemDialog->setup(text);
+	if (m_addSystemDialog->exec() == QDialog::Accepted)
+	{
+		// done
+		clearFilter();
+	}
 }

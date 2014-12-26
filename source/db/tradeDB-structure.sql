@@ -19,7 +19,7 @@ LEFT JOIN GoodNames AS gn ON p.good_id=gn.id
 LEFT JOIN GoodGroups AS gg ON gn.group_id = gg.id
 LEFT JOIN stations AS st ON p.station_id=st.id
 ORDER BY gn.name, st.name, p.time;
-CREATE VIEW "GoodsInfoGrouped" AS  SELECT gg.name AS group_name, gn.name, UPPER(s.name) AS system, UPPER(st.name) AS station, pr.sale_price, pr.buy_price, pr.time
+CREATE VIEW "GoodsInfoGrouped" AS SELECT pr.id AS record_id, gg.name AS group_name, gn.name, UPPER(s.name) AS system, UPPER(st.name) AS station, pr.sale_price, pr.buy_price, pr.time
 FROM (SELECT * FROM prices ORDER BY time ASC) AS pr
 LEFT JOIN GoodNames AS gn ON pr.good_id=gn.id
 LEFT JOIN GoodGroups AS gg ON gn.group_id = gg.id

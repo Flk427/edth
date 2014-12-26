@@ -10,6 +10,7 @@ CSelectHelper::CSelectHelper(QWidget *parent) :
 	ui(new Ui::CSelectHelper)
 {
 	ui->setupUi(this);
+	hideClearButton();
 
 	m_model = new QSqlQueryModel(this);
 	m_sourceProxyModel = new QSortFilterProxyModel(this);
@@ -20,6 +21,10 @@ CSelectHelper::CSelectHelper(QWidget *parent) :
 	connect(ui->listView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListViewClicked(QModelIndex)));
 	// Сигнал для обновления зависимых таблиц
 	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(setFilter(QString)));
+	// Сигнал нажатия на кнопку "очистить"
+	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+	// Сигнал нажатия на кнопку "добавить"
+	connect(ui->addToolButton, SIGNAL(clicked()), this, SLOT(onAddButtonClicked()));
 }
 
 CSelectHelper::~CSelectHelper()
@@ -37,6 +42,16 @@ void CSelectHelper::setTitle(const QString& text)
 QString CSelectHelper::getText()
 {
 	return ui->label->text();
+}
+
+void CSelectHelper::hideClearButton()
+{
+	ui->clearToolButton->hide();
+}
+
+void CSelectHelper::showClearButton()
+{
+	ui->clearToolButton->show();
 }
 
 void CSelectHelper::setParentFilterName(const QString& value)
@@ -64,6 +79,11 @@ void CSelectHelper::setFilter(QString value)
 	updateList();
 }
 
+void CSelectHelper::clearFilter()
+{
+	setFilter("");
+}
+
 void CSelectHelper::updateList()
 {
 	QString query("SELECT id, name FROM " + m_tableName);
@@ -87,6 +107,8 @@ void CSelectHelper::updateList()
 	{
 		query += parentFilterName + " IN (" + parentFilterValue + ")";
 	}
+
+	query += " ORDER BY UPPER(name)";
 
 	qDebug() << m_tableName << "query: " << query;
 
@@ -120,4 +142,9 @@ void CSelectHelper::updateList()
 void CSelectHelper::onListViewClicked(QModelIndex modelIndex)
 {
 	ui->lineEdit->setText(modelIndex.data().toString());
+}
+
+void CSelectHelper::onAddButtonClicked()
+{
+	emit addButtonClicked(ui->lineEdit->text());
 }

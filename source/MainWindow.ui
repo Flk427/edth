@@ -39,7 +39,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string> Location filter </string>
+          <string> Location filter (wildcard: %)</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>

@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "CAddSystemDialog.h"
+#include "internal.h"
 
 namespace Ui {
 class CAddStationDialog;
@@ -14,17 +15,24 @@ class CAddStationDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit CAddStationDialog(CAddSystemDialog* addSystemDialog, QWidget *parent = 0);
-	void setup(QString stationName);
+	enum EAddMode {modeAdd, modeEdit};
+
+	explicit CAddStationDialog(QWidget *parent = 0);
+	void setup(PSSTATE pState, QString newName);
 	~CAddStationDialog();
 
 private:
 	Ui::CAddStationDialog *ui;
-	CAddSystemDialog* m_addSystemDialog;
-	QString m_stationName;
+
+	EAddMode m_mode;
+	int m_id;
+	QString m_oldName;
+	QString m_newName;
+	PSSTATE m_pState;
 
 private slots:
-	void addSystemName(QString text);
+	void onAcceptClicked();
+	void onTextChanged();
 };
 
 #endif // CADDSTATIONDIALOG_H

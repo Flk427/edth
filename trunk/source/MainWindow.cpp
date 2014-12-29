@@ -12,8 +12,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	state.m_systemSelected = false;
+	state.m_systemId = -1;
+
+	state.m_stationSelected = false;
+	state.m_stationId = -1;
+
+	state.m_commoditySelected = false;
+	state.m_commodityId = -1;
+
+	activatePriceButton();
+
 	m_addSystemDialog = new CAddSystemDialog(this);
-	m_addStationDialog = new CAddStationDialog(m_addSystemDialog, this);
+	m_addStationDialog = new CAddStationDialog(this);
+	m_addPriceDialog = new CAddPriceDialog(this);
 
 	setWindowTitle("Elite Dangerous Trade Helper");
 	ui->widget->setTitle("System");
@@ -42,10 +54,16 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->widget_3, SIGNAL(textChanged(QString)), this, SLOT(onCommodityNameChanged(QString)));
 
 	connect(ui->widget, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onSystemsListChanged(QVector<SItem>)));
+	connect(ui->widget_2, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onStationsListChanged(QVector<SItem>)));
+	connect(ui->widget_3, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onCommodityesListChanged(QVector<SItem>)));
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
 	connect(ui->widget, SIGNAL(addButtonClicked(QString)), this, SLOT(addSystemName(QString)));
 	connect(ui->widget_2, SIGNAL(addButtonClicked(QString)), this, SLOT(addStation(QString)));
+
+	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(onSetPriceClicked()));
+
+	setupStationEditButton();
 }
 
 MainWindow::~MainWindow()
@@ -143,6 +161,13 @@ void MainWindow::readSettings()
 	if (m_dbFile.isEmpty()) m_dbFile = "db\\tradeDB.sqlite";
 }
 
+void MainWindow::setupStationEditButton()
+{
+	ui->widget_2->setEditButtonEnabled(
+				state.m_systemSelected // Если выбрана система - можно добавить новую станцию
+				|| (ui->widget_2->getText() == state.m_stationName && state.m_stationSelected));
+}
+
 void MainWindow::clearFilter()
 {
 	m_systemName = "";
@@ -197,6 +222,12 @@ void MainWindow::onSystemsListChanged(QVector<SItem> items)
 {
 	qDebug() << "MainWindow::onSystemsListChanged" << items.length();
 
+//	if (ui->widget->getText().isEmpty())
+//	{
+//		ui->widget_2->setParentFilterValue("");
+//		return;
+//	}
+
 	m_filterItems.clear();
 
 //	if (!m_systemName.isEmpty())
@@ -209,6 +240,23 @@ void MainWindow::onSystemsListChanged(QVector<SItem> items)
 
 	qDebug() << "Filter:" << m_filterItems.join(", ");
 
+	if (m_filterItems.length() == 1)
+	{
+		state.m_systemSelected = true;
+		state.m_systemId = items[0].id;
+		state.m_selectedSystemName = items[0].name;
+		qDebug() << "MainWindow::onSystemsListChanged: System selected:" << state.m_systemId;
+	}
+	else
+	{
+		state.m_systemSelected = false;
+		state.m_systemId = -1;
+		state.m_selectedSystemName = "";
+		qDebug() << "MainWindow::onSystemsListChanged: System not selected";
+	}
+
+	setupStationEditButton();
+
 	ui->widget_2->setParentFilterValue(m_filterItems.join(", "));
 }
 
@@ -218,7 +266,7 @@ void MainWindow::onStationsListChanged(QVector<SItem> items)
 
 	m_filterItems.clear();
 
-	if (!m_systemName.isEmpty())
+//	if (!m_systemName.isEmpty())
 	{
 		for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
 		{
@@ -226,14 +274,68 @@ void MainWindow::onStationsListChanged(QVector<SItem> items)
 		}
 	}
 
-	qDebug() << "Filter:" << m_filterItems.join(", ");
+	qDebug() << "Stations:" << m_filterItems.join(", ");
 
-	ui->widget_3->setParentFilterValue(m_filterItems.join(", "));
+	if (m_filterItems.length() == 1)
+	{
+		state.m_stationSelected = true;
+		state.m_stationId = items[0].id;
+		state.m_stationName = items[0].name;
+		qDebug() << "MainWindow::onStationsListChanged: Staion selected:" << state.m_stationId;
+
+		m_planetName = state.m_stationName;
+		refreshTable(m_systemName, m_planetName, m_commodityName);
+	}
+	else
+	{
+		state.m_stationSelected = false;
+		state.m_stationId = -1;
+		state.m_stationName = "";
+		qDebug() << "MainWindow::onStationsListChanged: Staion not selected";
+
+		m_planetName = "";
+		refreshTable(m_systemName, m_planetName, m_commodityName);
+	}
+
+	setupStationEditButton();
+	activatePriceButton();
+
+//	ui->widget_3->setParentFilterValue(m_filterItems.join(", "));
+}
+
+void MainWindow::onCommodityesListChanged(QVector<SItem> items)
+{
+	qDebug() << "MainWindow::onCommodityesListChanged";
+
+	m_filterItems.clear();
+
+	for (QVector<SItem>::iterator it=items.begin(); it != items.end(); it++)
+	{
+		m_filterItems.push_back(QString::number(it->id));
+	}
+
+	qDebug() << "Commodityes:" << m_filterItems.join(", ");
+
+	if (m_filterItems.length() == 1)
+	{
+		state.m_commoditySelected = true;
+		state.m_commodityId = items[0].id;
+		qDebug() << "MainWindow::onCommodityesListChanged: Commodity selected:" << state.m_commodityId;
+	}
+	else
+	{
+		state.m_commoditySelected = false;
+		state.m_commodityId = -1;
+		qDebug() << "MainWindow::onCommodityesListChanged: Commodity not selected";
+	}
+
+	activatePriceButton();
 }
 
 void MainWindow::addSystemName(QString text)
 {
 	m_addSystemDialog->setup(text);
+//	m_addSystemDialog->setup(m_selectedSystemName);
 	if (m_addSystemDialog->exec() == QDialog::Accepted)
 	{
 		// done
@@ -243,10 +345,25 @@ void MainWindow::addSystemName(QString text)
 
 void MainWindow::addStation(QString text)
 {
-	m_addStationDialog->setup(m_systemName);
+	m_addStationDialog->setup(&state, ui->widget_2->getText());
 	if (m_addStationDialog->exec() == QDialog::Accepted)
 	{
 		// done
 		clearFilter();
 	}
+}
+
+void MainWindow::onSetPriceClicked()
+{
+	qDebug() << "Set price for:" << state.m_commodityId << "at:" << state.m_stationId;
+	m_addPriceDialog->setup(state.m_stationId, state.m_commodityId);
+	m_addPriceDialog->exec();
+	//showSetPriceDialog();
+	//	m_stationId
+	//	m_commodityId
+}
+
+void MainWindow::activatePriceButton()
+{
+	ui->toolButton->setEnabled(state.m_stationSelected && state.m_commoditySelected);
 }

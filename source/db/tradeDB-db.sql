@@ -118,7 +118,7 @@ INSERT INTO "Stations" VALUES(3,'Mcnair gateway',6,4);
 INSERT INTO "Stations" VALUES(4,'Yaping enterprise','',1);
 INSERT INTO "Stations" VALUES(5,'Boodt','',1);
 INSERT INTO "Stations" VALUES(6,'Barsanti enterprise','',1);
-INSERT INTO "Stations" VALUES(7,'Bear city','',4);
+INSERT INTO "Stations" VALUES(7,'Bear city',11,4);
 INSERT INTO "Stations" VALUES(8,'Marshall ring','',1);
 INSERT INTO "Stations" VALUES(9,'Kondratyev dock',7,0);
 INSERT INTO "Stations" VALUES(10,'wundt hub','',0);
@@ -138,6 +138,7 @@ INSERT INTO "Systems" VALUES(7,'Cupis',0,0,'');
 INSERT INTO "Systems" VALUES(8,'Karogonibo',0,0,0);
 INSERT INTO "Systems" VALUES(9,'Sharakha',0,0,0);
 INSERT INTO "Systems" VALUES(10,'Mechtan',0,0,0);
+INSERT INTO "Systems" VALUES(11,'Freng',0,0,0);
 DROP TABLE IF EXISTS "prices";
 CREATE TABLE "prices" ("id" INTEGER PRIMARY KEY  NOT NULL ,"good_id" INTEGER NOT NULL ,"station_id" INTEGER NOT NULL  DEFAULT (null) ,"time" DATETIME NOT NULL ,"sale_price" FLOAT,"buy_price" FLOAT);
 INSERT INTO "prices" VALUES(7,2,1,'2014-12-18 20:06',365,NULL);
@@ -181,11 +182,11 @@ LEFT JOIN GoodNames AS gn ON p.good_id=gn.id
 LEFT JOIN GoodGroups AS gg ON gn.group_id = gg.id
 LEFT JOIN stations AS st ON p.station_id=st.id
 ORDER BY gn.name, st.name, p.time;
-CREATE VIEW "GoodsInfoGrouped" AS  SELECT pr.id AS record_id, gg.name AS group_name, gn.name, UPPER(s.name) AS system, UPPER(st.name) AS station, pr.sale_price, pr.buy_price, pr.time
+CREATE VIEW "GoodsInfoGrouped" AS  SELECT gg.name AS group_name, gn.name, UPPER(s.name) AS system, UPPER(st.name) AS station, pr.sale_price, pr.buy_price, pr.time
 FROM (SELECT * FROM prices ORDER BY time ASC) AS pr
 LEFT JOIN GoodNames AS gn ON pr.good_id=gn.id
 LEFT JOIN GoodGroups AS gg ON gn.group_id = gg.id
 LEFT JOIN stations AS st ON pr.station_id=st.id
 LEFT JOIN Systems AS s ON st.system_id=s.id
 GROUP BY st.name, pr.good_id
-ORDER BY gg.position, gn.name, s.name, st.name, st.name, pr.time DESC;
+ORDER BY gg.position, gn.name, st.name, pr.time DESC;

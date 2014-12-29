@@ -27,6 +27,7 @@ void CAddPriceDialog::setup(int station, int commodity)
 	m_commodity = commodity;
 
 	ui->lineEdit->setText("");
+    ui->lineEdit->setFocus();
 	ui->lineEdit_2->setText("");
 
 	QString queryText(QString("SELECT UPPER(name) AS name FROM stations WHERE id=%1").arg(m_station));

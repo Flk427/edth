@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->widget_2, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onStationsListChanged(QVector<SItem>)));
 	connect(ui->widget_3, SIGNAL(listChanged(QVector<SItem>)), this, SLOT(onCommodityesListChanged(QVector<SItem>)));
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+	connect(ui->toolButton_2, SIGNAL(clicked()), this, SLOT(clearAllFilters()));
 
 	connect(ui->widget, SIGNAL(addButtonClicked(QString)), this, SLOT(addSystemName(QString)));
 	connect(ui->widget_2, SIGNAL(addButtonClicked(QString)), this, SLOT(addStation(QString)));
@@ -180,6 +181,22 @@ void MainWindow::clearFilter()
 
 	refreshTable(m_systemName, m_planetName, m_commodityName);
 }
+
+void MainWindow::clearAllFilters()
+{
+	m_systemName = "";
+	m_planetName = "";
+	m_commodityName = "";
+
+	ui->widget->clearFilter();
+	ui->widget_2->clearFilter();
+	ui->widget_3->clearFilter();
+
+	ui->widget_2->setParentFilterValue("");
+
+	refreshTable(m_systemName, m_planetName, m_commodityName);
+}
+
 
 /*!
    \brief MainWindow::onSystemNameChanged
@@ -357,7 +374,11 @@ void MainWindow::onSetPriceClicked()
 {
 	qDebug() << "Set price for:" << state.m_commodityId << "at:" << state.m_stationId;
 	m_addPriceDialog->setup(state.m_stationId, state.m_commodityId);
-	m_addPriceDialog->exec();
+
+	if (m_addPriceDialog->exec())
+	{
+		refreshTable(m_systemName, m_planetName, m_commodityName);
+	}
 	//showSetPriceDialog();
 	//	m_stationId
 	//	m_commodityId

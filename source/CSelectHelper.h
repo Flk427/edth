@@ -34,6 +34,8 @@ public:
 	void setParentFilterName(const QString& value);
 	void setParentFilterValue(const QString& value);
 
+	int getItemsCount();
+
 private:
 	Ui::CSelectHelper *ui;
 	QString m_tableName;
@@ -47,6 +49,7 @@ public slots:
 	void setTable(QString tableName);
 	void setFilter(QString value);
 	void clearFilter();
+	void setEditButtonEnabled(bool enabled);
 
 private slots:
 	void updateList();

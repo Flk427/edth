@@ -43,7 +43,7 @@ void CSelectHelper::setTitle(const QString& text)
 
 QString CSelectHelper::getText()
 {
-	return ui->label->text();
+	return ui->lineEdit->text();
 }
 
 void CSelectHelper::hideClearButton()
@@ -68,6 +68,11 @@ void CSelectHelper::setParentFilterValue(const QString& value)
 	updateList();
 }
 
+int CSelectHelper::getItemsCount()
+{
+	return ui->listView->model()->rowCount();
+}
+
 void CSelectHelper::setTable(QString tableName)
 {
 	m_tableName = tableName;
@@ -86,6 +91,11 @@ void CSelectHelper::setFilter(QString value)
 void CSelectHelper::clearFilter()
 {
 	setFilter("");
+}
+
+void CSelectHelper::setEditButtonEnabled(bool enabled)
+{
+	ui->addToolButton->setEnabled(enabled);
 }
 
 void CSelectHelper::updateList()
@@ -132,7 +142,7 @@ void CSelectHelper::updateList()
 
 	QVector<SItem> items;
 
-	if (!ui->lineEdit->text().isEmpty())
+//	if (!ui->lineEdit->text().isEmpty())
 	{
 		for (int i=0; i<ui->listView->model()->rowCount(); i++)
 		{
@@ -152,6 +162,8 @@ void CSelectHelper::updateList()
 void CSelectHelper::onListViewClicked(QModelIndex modelIndex)
 {
 	ui->lineEdit->setText(modelIndex.data().toString());
+//	int id = ui->listView->model()->index(ui->listView->currentIndex().row(), 0).data().toInt();
+//	qDebug() << "CSelectHelper::onListViewClicked id =" << id;
 }
 
 void CSelectHelper::onAddButtonClicked()

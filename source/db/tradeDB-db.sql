@@ -138,10 +138,6 @@ INSERT INTO "Systems" VALUES(7,'Cupis',0,0,'');
 INSERT INTO "Systems" VALUES(8,'Karogonibo',0,0,0);
 INSERT INTO "Systems" VALUES(9,'Sharakha',0,0,0);
 INSERT INTO "Systems" VALUES(10,'Mechtan',0,0,0);
-INSERT INTO "Systems" VALUES(11,'asd3',0,0,0);
-INSERT INTO "Systems" VALUES(12,'asd2',0,0,0);
-INSERT INTO "Systems" VALUES(13,'asd1',0,0,0);
-INSERT INTO "Systems" VALUES(14,'asd',0,0,0);
 DROP TABLE IF EXISTS "prices";
 CREATE TABLE "prices" ("id" INTEGER PRIMARY KEY  NOT NULL ,"good_id" INTEGER NOT NULL ,"station_id" INTEGER NOT NULL  DEFAULT (null) ,"time" DATETIME NOT NULL ,"sale_price" FLOAT,"buy_price" FLOAT);
 INSERT INTO "prices" VALUES(7,2,1,'2014-12-18 20:06',365,NULL);
@@ -170,6 +166,7 @@ INSERT INTO "prices" VALUES(29,2,7,'2014-12-18',205,220);
 INSERT INTO "prices" VALUES(30,6,4,'2014-12-18',405,NULL);
 INSERT INTO "prices" VALUES(31,7,5,'2014-12-18',7360,NULL);
 INSERT INTO "prices" VALUES(32,46,7,'2014-12-18',8888,8903);
+INSERT INTO "prices" VALUES(34,3,2,'2014-12-29 12:26:57',91,92);
 CREATE VIEW "GetPlanets" AS SELECT st.id, st.name AS station, s.name AS system, gov.name AS government, eco.name AS economy
 FROM stations AS st
 LEFT JOIN Systems AS s ON s.id = st.system_id

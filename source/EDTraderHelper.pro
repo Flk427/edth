@@ -20,17 +20,21 @@ SOURCES += main.cpp\
 		MainWindow.cpp \
 	CSelectHelper.cpp \
     CAddSystemDialog.cpp \
-    CAddStationDialog.cpp
+    CAddStationDialog.cpp \
+    CAddPriceDialog.cpp
 
 HEADERS  += MainWindow.h \
 	CSelectHelper.h \
     CAddSystemDialog.h \
-    CAddStationDialog.h
+    CAddStationDialog.h \
+    CAddPriceDialog.h \
+    internal.h
 
 FORMS    += MainWindow.ui \
 	CSelectHelper.ui \
     CAddSystemDialog.ui \
-    CAddStationDialog.ui
+    CAddStationDialog.ui \
+    CAddPriceDialog.ui
 
 DISTFILES += \
 	dbtools/createQuery.cmd \

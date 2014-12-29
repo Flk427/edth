@@ -53,6 +53,7 @@ private:
 
 public slots:
 	void clearFilter();
+	void clearAllFilters();
 
 private slots:
 	void onSystemNameChanged(QString systemName);

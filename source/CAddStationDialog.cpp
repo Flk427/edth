@@ -87,7 +87,10 @@ void CAddStationDialog::onAcceptClicked()
 
 	if (m_mode == modeAdd)
 	{
-		queryText = QString("INSERT INTO stations (name, system_id, government_id) VALUES ('%1', %2, 0)").arg(ui->lineEdit->text().arg(m_pState->m_systemId));
+		queryText = QString("INSERT INTO stations (name, system_id, government_id) VALUES ('%1', %2, 0)")
+					.arg(ui->lineEdit->text())
+					.arg(m_pState->m_systemId);
+		qDebug() << queryText;
 		query.exec(queryText);
 	}
 	else

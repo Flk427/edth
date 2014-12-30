@@ -2,6 +2,7 @@
 #define CADDPRICEDIALOG_H
 
 #include <QDialog>
+#include <QEvent>
 
 namespace Ui {
 class CAddPriceDialog;
@@ -25,6 +26,11 @@ private:
 
 	int m_sell;
 	int m_buy;
+
+protected:
+	void eventHandler(QEvent *e);
+	bool eventFilter(QObject* obj, QEvent *event);
+
 
 private slots:
 	void onAcceptClicked();

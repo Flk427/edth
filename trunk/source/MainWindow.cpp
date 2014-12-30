@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->widget_2, SIGNAL(addButtonClicked(QString)), this, SLOT(addStation(QString)));
 
 	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(onSetPriceClicked()));
+	connect(ui->widget_3, SIGNAL(enterPressed()), this, SLOT(onSetPriceClicked()));
 
 	setupStationEditButton();
 }
@@ -376,8 +377,8 @@ void MainWindow::onSetPriceClicked()
 	qDebug() << "Set price for:" << state.m_commodityId << "at:" << state.m_stationId;
 	m_addPriceDialog->setup(state.m_stationId, state.m_commodityId);
 
-    const QPoint global = this->mapToGlobal(rect().center());
-    m_addPriceDialog->move(global.x() - m_addPriceDialog->width() / 2, global.y() - m_addPriceDialog->height() / 2);
+	const QPoint global = this->mapToGlobal(rect().center());
+	m_addPriceDialog->move(global.x() - m_addPriceDialog->width() / 2, global.y() - m_addPriceDialog->height() / 2);
 
 	if (m_addPriceDialog->exec())
 	{

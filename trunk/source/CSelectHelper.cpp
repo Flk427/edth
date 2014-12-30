@@ -5,6 +5,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QStringListModel>
+#include <QKeyEvent>
 
 CSelectHelper::CSelectHelper(QWidget *parent) :
 	QWidget(parent),
@@ -27,6 +28,8 @@ CSelectHelper::CSelectHelper(QWidget *parent) :
 	connect(ui->clearToolButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	// Сигнал нажатия на кнопку "добавить"
 	connect(ui->addToolButton, SIGNAL(clicked()), this, SLOT(onAddButtonClicked()));
+
+	ui->listView->installEventFilter(this);
 }
 
 CSelectHelper::~CSelectHelper()
@@ -191,4 +194,23 @@ void CSelectHelper::onSelectionChanged(const QModelIndex& i1, const QModelIndex&
 //	{
 //		qDebug() << selection.indexes().first().data().toString();
 //	}
+}
+
+bool CSelectHelper::eventFilter(QObject* obj, QEvent *event)
+{
+	if (obj == ui->listView)
+	{
+		if (event->type() == QEvent::KeyPress)
+		{
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			if(keyEvent->key() == Qt::Key_Return)
+			{
+				qDebug() << "listView -> Qt::Key_Return";
+				emit enterPressed();
+				return true;
+			}
+		}
+		return false;
+	}
+	return QWidget::eventFilter(obj, event);
 }

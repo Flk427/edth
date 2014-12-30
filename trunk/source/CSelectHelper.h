@@ -6,6 +6,7 @@
 #include <QSortFilterProxyModel>
 #include <QCompleter>
 #include <QVector>
+#include <QEvent>
 
 namespace Ui {
 class CSelectHelper;
@@ -45,6 +46,9 @@ private:
 	QString parentFilterName;
 	QString parentFilterValue;
 
+protected:
+	bool eventFilter(QObject* obj, QEvent *event);
+
 public slots:
 	void setTable(QString tableName);
 	void setFilter(QString value);
@@ -61,6 +65,7 @@ signals:
 	void textChanged(QString text);
 	void listChanged(const QVector<SItem>& items);
 	void addButtonClicked(QString text);
+	void enterPressed();
 };
 
 #endif // CSELECTHELPER_H

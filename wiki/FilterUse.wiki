@@ -8,4 +8,4 @@ Search prices. Filter use.
 = Details =
 
 To search prices for any commodity just enter _station name_ and/or _commodity name_ into appropriate fields.
-Any value can be entered by *any part* of it.
+Any value can be entered by *any part* of it. You may use '%' as wildcard symbol for substring, i.e 'L%4' will found 'LHS 3447' and 'LTT 18486'. By default search working as '<search string>%'.

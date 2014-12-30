@@ -98,6 +98,12 @@ bool CEditPriceDialog::eventFilter(QObject* obj, QEvent* event)
 
 void CEditPriceDialog::onOk()
 {
+	bool isInt1;
+	bool isInt2;
+
+	m_sell = ui->lineEdit->text().toInt(&isInt1);
+	m_buy = ui->lineEdit_2->text().toInt(&isInt2);
+
 	QDateTime time = QDateTime::currentDateTime();
 
 	QString timeStr(

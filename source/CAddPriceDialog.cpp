@@ -4,6 +4,8 @@
 #include <QSqlQuery>
 #include <QPushButton>
 #include <QDateTime>
+#include <QKeyEvent>
+#include <QDebug>
 
 CAddPriceDialog::CAddPriceDialog(QWidget *parent) :
 	QDialog(parent),
@@ -14,6 +16,9 @@ CAddPriceDialog::CAddPriceDialog(QWidget *parent) :
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(validateData()));
 	connect(ui->lineEdit_2, SIGNAL(textChanged(QString)), this, SLOT(validateData()));
+
+	ui->lineEdit->installEventFilter(this);
+	ui->lineEdit_2->installEventFilter(this);
 }
 
 CAddPriceDialog::~CAddPriceDialog()
@@ -27,7 +32,7 @@ void CAddPriceDialog::setup(int station, int commodity)
 	m_commodity = commodity;
 
 	ui->lineEdit->setText("");
-    ui->lineEdit->setFocus();
+	ui->lineEdit->setFocus();
 	ui->lineEdit_2->setText("");
 
 	QString queryText(QString("SELECT UPPER(name) AS name FROM stations WHERE id=%1").arg(m_station));
@@ -40,10 +45,46 @@ void CAddPriceDialog::setup(int station, int commodity)
 
 	queryText = QString("SELECT UPPER(name) AS name FROM GoodNames WHERE id=%1").arg(m_commodity);
 	query.exec(queryText);
+
 	if (query.next())
 	{
 		ui->label_4->setText("Commodity: " + query.value("name").toString());
 	}
+}
+
+bool CAddPriceDialog::eventFilter(QObject* obj, QEvent *event)
+{
+	if (obj == ui->lineEdit)
+		{
+			if (event->type() == QEvent::KeyPress)
+			{
+				QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+				if(keyEvent->key() == Qt::Key_Down)
+				{
+					qDebug() << "lineEdit -> Qt::Key_Down";
+					ui->lineEdit_2->setFocus();
+					ui->lineEdit_2->selectAll();
+					return true;
+				}
+			}
+			return false;
+		}
+	if (obj == ui->lineEdit_2)
+		{
+			if (event->type() == QEvent::KeyPress)
+			{
+				QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+				if (keyEvent->key() == Qt::Key_Up)
+				{
+					 qDebug() << "lineEdit -> Qt::Key_Up";
+					 ui->lineEdit->setFocus();
+					 ui->lineEdit->selectAll();
+					 return true;
+				}
+			}
+			return false;
+		}
+		return QDialog::eventFilter(obj, event);
 }
 
 void CAddPriceDialog::onAcceptClicked()
@@ -59,13 +100,27 @@ void CAddPriceDialog::onAcceptClicked()
 				.arg(time.time().minute())
 				.arg(time.time().second()));
 
-	QString queryText("INSERT INTO prices (good_id, station_id, time, sale_price, buy_price) "
-							  +QString(" VALUES (%1, %2, '%3', %4, %5)")
-					  .arg(m_commodity)
-					  .arg(m_station)
-					  .arg(timeStr)
-					  .arg(m_sell)
-					  .arg(m_buy));
+	QString queryText;
+
+	if (ui->lineEdit_2->text().isEmpty())
+	{
+		queryText = QString("INSERT INTO prices (good_id, station_id, time, sale_price) "
+							+QString(" VALUES (%1, %2, '%3', %4)")
+							.arg(m_commodity)
+							.arg(m_station)
+							.arg(timeStr)
+							.arg(m_sell));
+	}
+	else
+	{
+		queryText = QString("INSERT INTO prices (good_id, station_id, time, sale_price, buy_price) "
+							+QString(" VALUES (%1, %2, '%3', %4, %5)")
+							.arg(m_commodity)
+							.arg(m_station)
+							.arg(timeStr)
+							.arg(m_sell)
+							.arg(m_buy));
+	}
 	QSqlQuery query;
 	query.exec(queryText);
 
@@ -89,7 +144,7 @@ void CAddPriceDialog::validateData()
 		ui->label_2->setText("Sell");
 	}
 
-	if (!isInt2)
+	if (!ui->lineEdit_2->text().isEmpty() && !isInt2)
 	{
 		ui->label_3->setText("Buy*");
 	}
@@ -98,7 +153,7 @@ void CAddPriceDialog::validateData()
 		ui->label_3->setText("Buy");
 	}
 
-	if (!isInt1 || !isInt2)
+	if (!isInt1 || !isInt2 && !ui->lineEdit_2->text().isEmpty())
 	{
 		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	}

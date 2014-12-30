@@ -7,10 +7,12 @@
 #include <QtSql/QSqlQuery>
 #include "CSelectHelper.h"
 #include <QDebug>
+#include <QEvent>
 
 #include "CAddSystemDialog.h"
 #include "CAddStationDialog.h"
 #include "CAddPriceDialog.h"
+#include "CEditPriceDialog.h"
 #include "internal.h"
 
 namespace Ui {
@@ -43,6 +45,7 @@ private:
 	CAddSystemDialog* m_addSystemDialog;
 	CAddStationDialog* m_addStationDialog;
 	CAddPriceDialog* m_addPriceDialog;
+	CEditPriceDialog* m_editPriceDialog;
 
 	void initialize();
 	void refreshTable(const QString& system, const QString& planet, const QString& commodity);
@@ -50,6 +53,9 @@ private:
 	void closeEvent(QCloseEvent *event);
 	void readSettings();
 	void setupStationEditButton();
+
+protected:
+	bool eventFilter(QObject* obj, QEvent *event);
 
 public slots:
 	void clearFilter();
@@ -70,6 +76,7 @@ private slots:
 	void onSetPriceClicked();
 
 	void activatePriceButton();
+	void priceEdit(QModelIndex index);
 };
 
 #endif // MAINWINDOW_H

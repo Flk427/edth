@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CAddPriceDialog</class>
- <widget class="QDialog" name="CAddPriceDialog">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
+ <class>CEditPriceDialog</class>
+ <widget class="QDialog" name="CEditPriceDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -139,16 +136,16 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CAddPriceDialog</receiver>
+   <receiver>CEditPriceDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>149</x>
+     <y>132</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>149</x>
+     <y>76</y>
     </hint>
    </hints>
   </connection>

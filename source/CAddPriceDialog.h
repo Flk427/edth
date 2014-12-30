@@ -28,9 +28,7 @@ private:
 	int m_buy;
 
 protected:
-	void eventHandler(QEvent *e);
 	bool eventFilter(QObject* obj, QEvent *event);
-
 
 private slots:
 	void onAcceptClicked();

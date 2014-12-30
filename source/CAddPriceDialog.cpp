@@ -13,10 +13,10 @@ CAddPriceDialog::CAddPriceDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(onAcceptClicked()));
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(validateData()));
 	connect(ui->lineEdit_2, SIGNAL(textChanged(QString)), this, SLOT(validateData()));
 
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	ui->lineEdit->installEventFilter(this);
 	ui->lineEdit_2->installEventFilter(this);
 }

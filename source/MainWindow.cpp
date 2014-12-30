@@ -6,6 +6,8 @@
 #include <QStringList>
 #include <QSettings>
 #include <QPoint>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -27,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_addSystemDialog = new CAddSystemDialog(this);
 	m_addStationDialog = new CAddStationDialog(this);
 	m_addPriceDialog = new CAddPriceDialog(this);
+	m_editPriceDialog = new CEditPriceDialog(this);
 
 	setWindowTitle("Elite Dangerous Trade Helper");
 	ui->widget->setTitle("System");
@@ -65,6 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(onSetPriceClicked()));
 	connect(ui->widget_3, SIGNAL(enterPressed()), this, SLOT(onSetPriceClicked()));
+
+	ui->tableView->installEventFilter(this);
+	connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(priceEdit(QModelIndex)));
 
 	setupStationEditButton();
 }
@@ -169,6 +175,39 @@ void MainWindow::setupStationEditButton()
 	ui->widget_2->setEditButtonEnabled(
 				state.m_systemSelected // Если выбрана система - можно добавить новую станцию
 				|| (ui->widget_2->getText() == state.m_stationName && state.m_stationSelected));
+}
+
+void MainWindow::priceEdit(QModelIndex index)
+{
+	int id = ui->tableView->model()->index(index.row(), 0).data().toInt();
+	qDebug() << "priceEdit" << id;
+
+	const QPoint global = this->mapToGlobal(rect().center());
+	m_editPriceDialog->move(global.x() - m_editPriceDialog->width() / 2, global.y() - m_editPriceDialog->height() / 2);
+
+	if (m_editPriceDialog->begin(id))
+	{
+		refreshTable(m_systemName, m_planetName, m_commodityName);
+	}
+}
+
+bool MainWindow::eventFilter(QObject* obj, QEvent* event)
+{
+	if (obj == ui->tableView)
+	{
+		if (event->type() == QEvent::KeyPress)
+		{
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->key() == Qt::Key_Return)
+			{
+				qDebug() << "tableView -> Qt::Key_Return";
+				priceEdit(ui->tableView->currentIndex());
+				return true;
+			}
+		}
+		return false;
+	}
+	return QMainWindow::eventFilter(obj, event);
 }
 
 void MainWindow::clearFilter()

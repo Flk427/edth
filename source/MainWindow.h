@@ -8,6 +8,7 @@
 #include "CSelectHelper.h"
 #include <QDebug>
 #include <QEvent>
+#include <QStringList>
 
 #include "CAddSystemDialog.h"
 #include "CAddStationDialog.h"
@@ -36,6 +37,7 @@ private:
 	QSqlDatabase m_db;
 	QSqlQueryModel* m_model;
 	QString m_dbFile;
+	QStringList m_systemsFilter;
 
 	QString m_systemName;
 	QString m_planetName;
@@ -77,6 +79,9 @@ private slots:
 
 	void activatePriceButton();
 	void priceEdit(QModelIndex index);
+
+	void onSystemFilterTextChanged(const QString& newText);
+	void onAddFilter();
 };
 
 #endif // MAINWINDOW_H

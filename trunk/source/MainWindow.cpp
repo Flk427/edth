@@ -72,6 +72,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tableView->installEventFilter(this);
 	connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(priceEdit(QModelIndex)));
 
+	connect(ui->lbSystemsFilter, SIGNAL(windowTitleChanged(QString)), this, SLOT(onSystemFilterTextChanged(const QString&)));
+	ui->lbSystemsFilter->setText("");
+
+	connect(ui->btnAddFilter, SIGNAL(clicked()), this, SLOT(onAddFilter()));
+
 	setupStationEditButton();
 }
 
@@ -127,6 +132,18 @@ void MainWindow::refreshTable(const QString& system, const QString& planet, cons
 	}
 
 	QString condition = (filter.isEmpty() ? "" : " WHERE " + filter.join(" AND "));
+
+//	if (!m_systemsFilter.isEmpty())
+//	{
+//		QStringList filter2;
+//		if (!commodity.isEmpty()) filter2.append(QString("UPPER(name) LIKE '%%1%'").arg(commodity));
+//		condition += "OR system IN (" + m_systemsFilter.join(", ") + ")";
+
+//		if (!filter2.isEmpty())
+//		{
+//			condition += " AND " + filter2.join(" AND ");
+//		}
+//	}
 
 	QSqlQuery query("SELECT * FROM GoodsInfoGrouped" + condition);
 	query.exec();
@@ -191,6 +208,20 @@ void MainWindow::priceEdit(QModelIndex index)
 	}
 }
 
+void MainWindow::onSystemFilterTextChanged(const QString& newText)
+{
+	ui->lbSystemsFilter->setVisible(!newText.isEmpty());
+}
+
+void MainWindow::onAddFilter()
+{
+	if (!ui->widget->getText().isEmpty())
+	{
+		m_systemsFilter.push_back("'" + ui->widget->getText() + "'");
+		ui->lbSystemsFilter->setText(m_systemsFilter.join(", "));
+	}
+}
+
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
 	if (obj == ui->tableView)
@@ -212,6 +243,9 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 
 void MainWindow::clearFilter()
 {
+	m_systemsFilter.clear();
+	ui->lbSystemsFilter->setText(m_systemsFilter.join(", "));
+
 	m_systemName = "";
 	m_planetName = "";
 
@@ -225,17 +259,22 @@ void MainWindow::clearFilter()
 
 void MainWindow::clearAllFilters()
 {
-	m_systemName = "";
-	m_planetName = "";
 	m_commodityName = "";
 
-	ui->widget->clearFilter();
-	ui->widget_2->clearFilter();
 	ui->widget_3->clearFilter();
 
-	ui->widget_2->setParentFilterValue("");
+	clearFilter();
+//	m_systemName = "";
+//	m_planetName = "";
+//	m_commodityName = "";
 
-	refreshTable(m_systemName, m_planetName, m_commodityName);
+//	ui->widget->clearFilter();
+//	ui->widget_2->clearFilter();
+//	ui->widget_3->clearFilter();
+
+//	ui->widget_2->setParentFilterValue("");
+
+//	refreshTable(m_systemName, m_planetName, m_commodityName);
 }
 
 

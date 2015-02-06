@@ -112,6 +112,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="btnAddFilter">
+              <property name="text">
+               <string>S&gt;</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -202,14 +209,25 @@
         <number>3</number>
        </property>
        <item>
-        <widget class="QTableView" name="tableView">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QLabel" name="lbSystemsFilter">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableView">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

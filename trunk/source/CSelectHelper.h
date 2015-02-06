@@ -45,6 +45,7 @@ private:
 	QSortFilterProxyModel* m_sourceProxyModel;
 	QString parentFilterName;
 	QString parentFilterValue;
+//	QString m_otherFilter;
 
 protected:
 	bool eventFilter(QObject* obj, QEvent *event);

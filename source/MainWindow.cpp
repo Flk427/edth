@@ -111,6 +111,15 @@ void MainWindow::initialize()
 		return;
 	}
 
+	/*
+		Foreign key constraints are disabled by default (for backwards compatibility),
+		so must be enabled separately for each database connection.
+		(Note, however, that future releases of SQLite might change so that foreign key
+		constraints enabled by default.)
+	*/
+	QSqlQuery query;
+	query.exec("PRAGMA foreign_keys = ON;");
+
 	m_model = new QSqlQueryModel(ui->tableView);
 	refreshTable(m_planetName, m_planetName, m_commodityName);
 }
